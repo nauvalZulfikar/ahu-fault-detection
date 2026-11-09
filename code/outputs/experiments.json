@@ -1,0 +1,57 @@
+{
+ "baseline": {
+  "events": 28.0,
+  "detected": 27.0,
+  "type_ok": 22.0,
+  "recall": 0.9642857142857143,
+  "typed_recall": 0.7857142857142857,
+  "median_delay_h": 9.333333333333334,
+  "alarms": 33.0,
+  "false_alarms": 2.0,
+  "fa_per_ahu_month": 0.008333333333333333
+ },
+ "no CO2": {
+  "events": 28.0,
+  "detected": 28.0,
+  "type_ok": 22.0,
+  "recall": 1.0,
+  "typed_recall": 0.7857142857142857,
+  "median_delay_h": 10.625,
+  "alarms": 33.0,
+  "false_alarms": 1.0,
+  "fa_per_ahu_month": 0.004166666666666667
+ },
+ "no CO2, no airflow": {
+  "events": 28.0,
+  "detected": 27.0,
+  "type_ok": 21.0,
+  "recall": 0.9642857142857143,
+  "typed_recall": 0.75,
+  "median_delay_h": 10.083333333333334,
+  "alarms": 33.0,
+  "false_alarms": 2.0,
+  "fa_per_ahu_month": 0.008333333333333333
+ },
+ "new AHU, day one": {
+  "events": 28.0,
+  "detected": 28.0,
+  "type_ok": 12.0,
+  "recall": 1.0,
+  "typed_recall": 0.42857142857142855,
+  "median_delay_h": 0.5833333333333333,
+  "alarms": 204.0,
+  "false_alarms": 179.0,
+  "fa_per_ahu_month": 0.7458333333333333
+ },
+ "new AHU, after 14-day listening": {
+  "events": 28.0,
+  "detected": 28.0,
+  "type_ok": 20.0,
+  "recall": 1.0,
+  "typed_recall": 0.7142857142857143,
+  "median_delay_h": 13.0,
+  "alarms": 36.0,
+  "false_alarms": 8.0,
+  "fa_per_ahu_month": 0.03612774451097805
+ }
+}

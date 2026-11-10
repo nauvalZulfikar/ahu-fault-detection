@@ -1,32 +1,32 @@
 experiment,kind,detected,type_ok,median_delay_h,false_alarms,fa_per_ahu_month,data,commit
-tuning t_on=0.8 smooth=12.0 hold=36.0,post-processing grid,27.0,22.0,9.333333333333334,2.0,0.008333333333333333,58daad558b7b2ceb,c5b6fc2
-tuning t_on=0.8 smooth=12.0 hold=144.0,post-processing grid,27.0,22.0,9.333333333333334,2.0,0.008333333333333333,58daad558b7b2ceb,c5b6fc2
-tuning t_on=0.7 smooth=12.0 hold=36.0,post-processing grid,27.0,22.0,8.833333333333334,3.0,0.0125,58daad558b7b2ceb,c5b6fc2
-tuning t_on=0.7 smooth=12.0 hold=144.0,post-processing grid,27.0,22.0,8.833333333333334,3.0,0.0125,58daad558b7b2ceb,c5b6fc2
-tuning t_on=0.6 smooth=36.0 hold=36.0,post-processing grid,27.0,21.0,11.75,1.0,0.004166666666666667,58daad558b7b2ceb,c5b6fc2
-tuning t_on=0.6 smooth=36.0 hold=144.0,post-processing grid,27.0,21.0,11.75,1.0,0.004166666666666667,58daad558b7b2ceb,c5b6fc2
-tuning t_on=0.7 smooth=36.0 hold=36.0,post-processing grid,27.0,21.0,12.25,1.0,0.004166666666666667,58daad558b7b2ceb,c5b6fc2
-tuning t_on=0.7 smooth=36.0 hold=144.0,post-processing grid,27.0,21.0,12.25,1.0,0.004166666666666667,58daad558b7b2ceb,c5b6fc2
-tuning t_on=0.8 smooth=36.0 hold=36.0,post-processing grid,27.0,21.0,13.0,1.0,0.004166666666666667,58daad558b7b2ceb,c5b6fc2
-tuning t_on=0.8 smooth=36.0 hold=144.0,post-processing grid,27.0,21.0,13.0,1.0,0.004166666666666667,58daad558b7b2ceb,c5b6fc2
-tuning t_on=0.9 smooth=12.0 hold=36.0,post-processing grid,27.0,21.0,11.5,1.0,0.004166666666666667,58daad558b7b2ceb,c5b6fc2
-tuning t_on=0.9 smooth=12.0 hold=144.0,post-processing grid,27.0,21.0,11.5,1.0,0.004166666666666667,58daad558b7b2ceb,c5b6fc2
-tuning t_on=0.9 smooth=36.0 hold=36.0,post-processing grid,27.0,21.0,14.5,1.0,0.004166666666666667,58daad558b7b2ceb,c5b6fc2
-tuning t_on=0.9 smooth=36.0 hold=144.0,post-processing grid,27.0,21.0,14.5,1.0,0.004166666666666667,58daad558b7b2ceb,c5b6fc2
-tuning t_on=0.6 smooth=12.0 hold=36.0,post-processing grid,27.0,22.0,8.416666666666666,4.0,0.016666666666666666,58daad558b7b2ceb,c5b6fc2
-tuning t_on=0.6 smooth=12.0 hold=144.0,post-processing grid,27.0,22.0,8.416666666666666,4.0,0.016666666666666666,58daad558b7b2ceb,c5b6fc2
-BMS SAT alarm (today),baseline vs model,14.0,8.0,2.875,8.0,0.03333333333333333,58daad558b7b2ceb,c5b6fc2
-Expert rules,baseline vs model,19.0,10.0,2.5833333333333335,9.0,0.0375,58daad558b7b2ceb,c5b6fc2
-Logistic regression,baseline vs model,25.0,17.0,6.833333333333333,27.0,0.1125,58daad558b7b2ceb,c5b6fc2
-Model,baseline vs model,27.0,22.0,9.333333333333334,2.0,0.008333333333333333,58daad558b7b2ceb,c5b6fc2
-classifier seed 0,seed spread,27.0,22.0,9.333333333333334,2.0,,58daad558b7b2ceb,c5b6fc2
-classifier seed 1,seed spread,27.0,21.0,10.666666666666666,3.0,,58daad558b7b2ceb,c5b6fc2
-classifier seed 2,seed spread,27.0,21.0,11.0,3.0,,58daad558b7b2ceb,c5b6fc2
-classifier seed 3,seed spread,27.0,21.0,8.833333333333334,3.0,,58daad558b7b2ceb,c5b6fc2
-classifier seed 4,seed spread,27.0,21.0,10.916666666666666,3.0,,58daad558b7b2ceb,c5b6fc2
-baseline,new AHU and sensors,27.0,22.0,9.333333333333334,2.0,0.008333333333333333,58daad558b7b2ceb,c5b6fc2
-no CO2,new AHU and sensors,28.0,22.0,10.625,1.0,0.004166666666666667,58daad558b7b2ceb,c5b6fc2
-"no CO2, no airflow",new AHU and sensors,27.0,21.0,10.083333333333334,2.0,0.008333333333333333,58daad558b7b2ceb,c5b6fc2
-"new AHU, day one",new AHU and sensors,28.0,12.0,0.5833333333333333,179.0,0.7458333333333333,58daad558b7b2ceb,c5b6fc2
-"new AHU, after 14-day listening",new AHU and sensors,28.0,20.0,13.0,8.0,0.03612774451097805,58daad558b7b2ceb,c5b6fc2
-nested post-processing tuning,honest estimate,27.0,20.0,11.25,2.0,0.008333333333333333,58daad558b7b2ceb,c5b6fc2
+tuning t_on=0.8 smooth=12.0 hold=36.0,post-processing grid,27.0,22.0,9.333333333333334,2.0,0.008333333333333333,58daad558b7b2ceb,e8f1790
+tuning t_on=0.8 smooth=12.0 hold=144.0,post-processing grid,27.0,22.0,9.333333333333334,2.0,0.008333333333333333,58daad558b7b2ceb,e8f1790
+tuning t_on=0.7 smooth=12.0 hold=36.0,post-processing grid,27.0,22.0,8.833333333333334,3.0,0.0125,58daad558b7b2ceb,e8f1790
+tuning t_on=0.7 smooth=12.0 hold=144.0,post-processing grid,27.0,22.0,8.833333333333334,3.0,0.0125,58daad558b7b2ceb,e8f1790
+tuning t_on=0.6 smooth=36.0 hold=36.0,post-processing grid,27.0,21.0,11.75,1.0,0.004166666666666667,58daad558b7b2ceb,e8f1790
+tuning t_on=0.6 smooth=36.0 hold=144.0,post-processing grid,27.0,21.0,11.75,1.0,0.004166666666666667,58daad558b7b2ceb,e8f1790
+tuning t_on=0.7 smooth=36.0 hold=36.0,post-processing grid,27.0,21.0,12.25,1.0,0.004166666666666667,58daad558b7b2ceb,e8f1790
+tuning t_on=0.7 smooth=36.0 hold=144.0,post-processing grid,27.0,21.0,12.25,1.0,0.004166666666666667,58daad558b7b2ceb,e8f1790
+tuning t_on=0.8 smooth=36.0 hold=36.0,post-processing grid,27.0,21.0,13.0,1.0,0.004166666666666667,58daad558b7b2ceb,e8f1790
+tuning t_on=0.8 smooth=36.0 hold=144.0,post-processing grid,27.0,21.0,13.0,1.0,0.004166666666666667,58daad558b7b2ceb,e8f1790
+tuning t_on=0.9 smooth=12.0 hold=36.0,post-processing grid,27.0,21.0,11.5,1.0,0.004166666666666667,58daad558b7b2ceb,e8f1790
+tuning t_on=0.9 smooth=12.0 hold=144.0,post-processing grid,27.0,21.0,11.5,1.0,0.004166666666666667,58daad558b7b2ceb,e8f1790
+tuning t_on=0.9 smooth=36.0 hold=36.0,post-processing grid,27.0,21.0,14.5,1.0,0.004166666666666667,58daad558b7b2ceb,e8f1790
+tuning t_on=0.9 smooth=36.0 hold=144.0,post-processing grid,27.0,21.0,14.5,1.0,0.004166666666666667,58daad558b7b2ceb,e8f1790
+tuning t_on=0.6 smooth=12.0 hold=36.0,post-processing grid,27.0,22.0,8.416666666666666,4.0,0.016666666666666666,58daad558b7b2ceb,e8f1790
+tuning t_on=0.6 smooth=12.0 hold=144.0,post-processing grid,27.0,22.0,8.416666666666666,4.0,0.016666666666666666,58daad558b7b2ceb,e8f1790
+BMS SAT alarm (today),baseline vs model,14.0,8.0,2.875,8.0,0.03333333333333333,58daad558b7b2ceb,e8f1790
+Expert rules,baseline vs model,19.0,10.0,2.5833333333333335,9.0,0.0375,58daad558b7b2ceb,e8f1790
+Logistic regression,baseline vs model,25.0,17.0,6.833333333333333,27.0,0.1125,58daad558b7b2ceb,e8f1790
+Model,baseline vs model,27.0,22.0,9.333333333333334,2.0,0.008333333333333333,58daad558b7b2ceb,e8f1790
+classifier seed 0,seed spread,27.0,22.0,9.333333333333334,2.0,,58daad558b7b2ceb,e8f1790
+classifier seed 1,seed spread,27.0,21.0,10.666666666666666,3.0,,58daad558b7b2ceb,e8f1790
+classifier seed 2,seed spread,27.0,21.0,11.0,3.0,,58daad558b7b2ceb,e8f1790
+classifier seed 3,seed spread,27.0,21.0,8.833333333333334,3.0,,58daad558b7b2ceb,e8f1790
+classifier seed 4,seed spread,27.0,21.0,10.916666666666666,3.0,,58daad558b7b2ceb,e8f1790
+baseline,new AHU and sensors,27.0,22.0,9.333333333333334,2.0,0.008333333333333333,58daad558b7b2ceb,e8f1790
+no CO2,new AHU and sensors,28.0,22.0,10.625,1.0,0.004166666666666667,58daad558b7b2ceb,e8f1790
+"no CO2, no airflow",new AHU and sensors,27.0,21.0,10.083333333333334,2.0,0.008333333333333333,58daad558b7b2ceb,e8f1790
+"new AHU, day one",new AHU and sensors,28.0,12.0,0.5833333333333333,179.0,0.7458333333333333,58daad558b7b2ceb,e8f1790
+"new AHU, after 14-day listening",new AHU and sensors,28.0,20.0,13.0,8.0,0.03612774451097805,58daad558b7b2ceb,e8f1790
+nested post-processing tuning,honest estimate,27.0,20.0,11.25,2.0,0.008333333333333333,58daad558b7b2ceb,e8f1790

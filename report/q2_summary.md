@@ -7,12 +7,12 @@
 3. **A LightGBM multiclass classifier** (normal + 4 faults) on 3 h and 12 h trailing medians of the residuals and physics features.
 4. **A causal alarm state machine.** An alarm opens when P(fault), smoothed over 1 h, rises above 0.8. It closes after 12 h below 0.3. The type is the class with the highest mean probability since the alarm opened.
 
-Why this design? Rules need per-unit thresholds and a raw-signal classifier learns the unit, not the fault. Residuals absorb unit differences and the physics keeps alerts explainable.
+Why this design? Residuals absorb the unit differences that would force per-unit rule thresholds or teach a raw-signal classifier the unit instead of the fault, and the physics keeps alerts explainable.
 
 **Validation.**
 - **Leave-one-month-out** on January to June with a 2-day purge. Neither the normal models nor the classifier see the scored month.
-- **No event leakage.** Events spanning two months leave training in both folds, and rows within a day of an event never count as "normal".
-- **Scored by event, as the maintenance team sees it:** found or not, right type or not, delay to the first alarm, and false alarms per AHU-month.
+- **No event leakage.** Events spanning two months leave training in both folds; rows within a day of an event never count as "normal".
+- **Scored by event:** found, right type, delay to the first alarm, false alarms per AHU-month.
 - **Thresholds** were tuned on the out-of-fold probabilities with `J = typed recall − 4 × FA/AHU-month`.
 
 **Results** (out of fold, 28 events, 240 AHU-months, 95% intervals). The bold row picks alarm thresholds inside each fold; every other row picks them on the scored months.
@@ -30,11 +30,13 @@ Why this design? Rules need per-unit thresholds and a raw-signal classifier lear
 
 **Against the rules**, the model finds 8 faults they miss and they find none it misses (McNemar p = 0.008; right type 12 to 0, p = 0.0005), with equal delay on the 19 both find (2.5 h vs 2.6 h). These gaps and the one against the BMS alarm survive a Holm correction. **Against a logistic regression** on the same features the model cuts false alarms from 27 to 2; its typing edge (6 to 1) is not significant (p = 0.125). **Across five seeds** every run finds 27/28, types 21 or 22 and raises 2 or 3 false alarms.
 
+**Value in money.** Priced with Yuill and Braun's (2017) figure of merit at assumed rates (3 kW per fault, 0.13 USD/kWh, 20 USD/h), the nested model is worth 0.61 USD per AHU-month against −2.78 for the BMS alarm, and it picks the same thresholds as `J` (notebook §18).
+
 **Errors.**
-- **Half of the 6 misses and wrong types are on the three chronically saturated units** (B1-AHU-05, B3-AHU-02, B3-AHU-09). With the valve already at 100%, low coil capacity, a stuck valve and sensor bias all just raise SAT. Fix: a separate mode for saturated units (SAT against CHW supply temperature and load) and a site check.
-- **The other confusions** (sensor bias vs low coil capacity on B1-AHU-02, stuck valve vs sensor bias on B3-AHU-06) need an independent discharge or zone temperature.
+- **Half of the 6 misses and wrong types are on the three chronically saturated units** (B1-AHU-05, B3-AHU-02, B3-AHU-09), where valve at 100% makes three faults look alike (SAT just rises). Fix: a saturated-unit mode and a site check.
+- **The other confusions** (B1-AHU-02, B3-AHU-06) need an independent discharge or zone temperature.
 - **The missed damper fault** (B3-AHU-05) is in the mall, which has no CO2 sensor. **One of the two false alarms is a real but unlabelled stuck damper** (B1-AHU-11, Q1 §1.5).
 
-**New AHU and fewer sensors.** Missing CO2 or airflow costs almost nothing, because the outdoor-air fraction from the temperature balance carries the damper evidence. **A brand-new AHU is the real risk** (179 false alarms on day one). **Fourteen days of listening** (no alerts, normal models refit on the unit's healthy weeks) fixes most of it, which drives onboarding in Q3 and Q4.
+**New AHU and fewer sensors.** Missing CO2 or airflow costs almost nothing (the temperature balance carries the damper evidence). **A brand-new AHU is the real risk** (179 false alarms on day one); **fourteen days of listening** with the normal models refit fixes most of it, which drives onboarding in Q3 and Q4.
 
 **Test period.** `predictions.csv` (711,994 rows) passes the validator and holds 12 sustained alarms (over 6 h).

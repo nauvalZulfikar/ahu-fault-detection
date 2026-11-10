@@ -56,7 +56,7 @@ Start-up and shut-down rows are transient, so the model scores only steady runni
 - This comes almost entirely from three units: **B1-AHU-05, B3-AHU-02 and B3-AHU-09**. Their valve is above 95% for 73 to 84% of running time and the fan is near 100%, yet SAT still sits 1.5 to 1.9 °C above setpoint, outside any labelled event.
 - These units are undersized or chronically degraded (fouled coil, low CHW flow, high filter loss). On them, "low coil capacity" cannot show up as more valve opening. That is why they cause half of the model's errors (Q2).
 
-**Filters.** Filter pressure drop follows a sawtooth: a slow rise, then a step down at each filter change (B3-AHU-07 in April and August, B2-AHU-06 in April and July). B1-AHU-05 climbs from 90 to about 250 Pa over six months before a change in July, which helps explain its saturation. Filter loading is normal ageing, not a labelled fault, so the normal-behaviour models take filter pressure drop as an input instead of flagging it.
+**Filters.** Filter pressure drop follows a sawtooth: a slow rise, then a step down at each filter change (B3-AHU-07 from about 135 to 40 Pa in late April, B2-AHU-06 from about 65 to 25 Pa in early April). B1-AHU-05 climbs from about 90 to 245 Pa over the six months with no change at all, which helps explain its saturation. Filter loading is normal ageing, not a labelled fault, so the normal-behaviour models take filter pressure drop as an input instead of flagging it.
 
 ![Filter pressure drop](figures/filter_dp.png)
 
@@ -78,7 +78,7 @@ For each labelled event, the figure shows the median of each signal during the e
 - **B1-AHU-11, 22 April to 5 May: an unlabelled stuck damper.**
   - The outdoor-air fraction falls from 0.08 to 0.02 and CO2 climbs by about 650 ppm.
   - The damper command rises from 15% to 70% with no effect: the stuck-damper signature exactly, with no work order.
-  - The model flags it (Q2), and it is the only "false alarm" out of fold. Labels come from work orders, so they are incomplete. A false-alarm count against them overstates the true false alarms.
+  - The model flags it (Q2), and it is one of only two "false alarms" out of fold. Labels come from work orders, so they are incomplete. A false-alarm count against them overstates the true false alarms.
 - **The three saturated units look like permanent low coil capacity.** They are not labelled, and probably should be checked as one maintenance item each.
 - **Labelled but hard to see:**
   - Sensor-bias events change almost nothing measurable.

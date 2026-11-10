@@ -21,7 +21,7 @@ CLF_PARAMS = dict(objective="multiclass", num_class=len(CLASSES), n_estimators=3
                   num_leaves=15, min_child_samples=200, subsample=0.5, subsample_freq=1,
                   colsample_bytree=0.7, reg_lambda=5.0, verbose=-1, n_jobs=8)
 NORMAL_KEEP = 4  # keep 1 in 4 normal rows when fitting the classifier (speed; faults kept in full)
-POST = dict(t_on=0.8, t_off=0.3, smooth=12, hold=144)  # tuned on out-of-fold data (notebook 02)
+POST = dict(t_on=0.8, t_off=0.3, smooth=12, hold=144)  # tuned on out-of-fold data (notebook section 9)
 
 
 def attach_labels(df: pd.DataFrame, labels: pd.DataFrame) -> pd.Series:
@@ -87,13 +87,19 @@ def make_windows(df: pd.DataFrame, res: pd.DataFrame) -> pd.DataFrame:
     return F.add_windows(s)
 
 
-def fit_classifier(X: pd.DataFrame, y: pd.Series, seed: int = 0) -> lgb.LGBMClassifier:
+def training_sample(X: pd.DataFrame, y: pd.Series):
+    """Subsampled rows, class codes and softened class weights shared by every classifier."""
     keep = (y != "normal") | (np.arange(len(y)) % NORMAL_KEEP == 0)
     X, y = X[keep], y[keep]
     counts = y.value_counts()
     w = y.map(lambda c: len(y) / (len(counts) * counts[c])) ** 0.5  # soften class imbalance
+    return X, pd.Categorical(y, categories=CLASSES).codes, w
+
+
+def fit_classifier(X: pd.DataFrame, y: pd.Series, seed: int = 0) -> lgb.LGBMClassifier:
+    X, codes, w = training_sample(X, y)
     clf = lgb.LGBMClassifier(**CLF_PARAMS, random_state=seed)
-    clf.fit(X, pd.Categorical(y, categories=CLASSES).codes, sample_weight=w)
+    clf.fit(X, codes, sample_weight=w)
     return clf
 
 
@@ -102,13 +108,13 @@ def predict_proba(clf, X) -> pd.DataFrame:
 
 
 def oof_probabilities(w: pd.DataFrame, df: pd.DataFrame, labels: pd.DataFrame, cols: list[str],
-                      months=range(1, 7), seed: int = 0) -> pd.DataFrame:
+                      months=range(1, 7), seed: int = 0, fit=fit_classifier) -> pd.DataFrame:
     tr = w[w["split"] == "train"]
     train_rows = tr[~tr["near_event"] | (tr["label"] != "normal")]  # drop fuzzy edges of events
     out = []
     for k in months:
         ok = fold_mask(df, labels, k).reindex(train_rows.index).fillna(False)
-        clf = fit_classifier(train_rows.loc[ok, cols], train_rows.loc[ok, "label"], seed)
+        clf = fit(train_rows.loc[ok, cols], train_rows.loc[ok, "label"], seed)
         hold = tr[tr["month"] == k]
         out.append(predict_proba(clf, hold[cols]))
     return pd.concat(out).reindex(tr.index)

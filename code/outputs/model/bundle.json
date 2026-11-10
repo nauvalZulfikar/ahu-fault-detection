@@ -1,6 +1,6 @@
 {
- "created_utc": "2026-11-10T09:28:26+00:00",
- "code_commit": "ffea4b8",
+ "created_utc": "2026-11-10T15:17:46+00:00",
+ "code_commit": "33cec5f",
  "data_sha256_16": {
   "ahu_train.parquet": "58daad558b7b2ceb",
   "ahu_test.parquet": "ceb2d9c0080cd974",
@@ -94,6 +94,7 @@
   "sat_sensor_bias",
   "low_coil_capacity"
  ],
+ "displayed_probability": "isotonic calibrator on out-of-fold P(fault), alarms use the raw score",
  "evaluation_oof_jan_jun": {
   "tuned_in_sample": {
    "events": 28.0,

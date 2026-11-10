@@ -22,6 +22,17 @@
    "false_alarms": 9.0,
    "fa_per_ahu_month": 0.0375
   },
+  "Logistic regression": {
+   "events": 28.0,
+   "detected": 25.0,
+   "type_ok": 17.0,
+   "recall": 0.8928571428571429,
+   "typed_recall": 0.6071428571428571,
+   "median_delay_h": 6.833333333333333,
+   "alarms": 55.0,
+   "false_alarms": 27.0,
+   "fa_per_ahu_month": 0.1125
+  },
   "Model": {
    "events": 28.0,
    "detected": 27.0,

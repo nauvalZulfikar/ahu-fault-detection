@@ -2,7 +2,7 @@
 
 ## 1.1 Approach
 
-I worked in five steps. Every check became a function in `code/src/ahu_fdd/clean.py`, so the same rule runs on the test period and later in production. Each step is a section of `notebooks/01_eda.ipynb`.
+I worked in five steps. Every check became a function in `code/src/ahu_fdd/clean.py`, so the same rule runs on the test period and later in production. Each step is a section of `notebooks/ahu_fault_detection.ipynb` (sections 1 to 6).
 
 1. **Structure and coverage.** Rows per AHU per day, duplicates, gaps, missing values per column and per building.
 2. **Data quality.** Plot every signal per AHU over time, then compare it with its physical range, with its neighbours and with the outdoor air temperature (OAT). All three buildings share the same weather, so OAT works as a reference clock.

@@ -6,8 +6,7 @@ air-handling units (AHUs) from 5-minute building-management-system data, 40 AHUs
 | | |
 |---|---|
 | [`report.pdf`](report.pdf) | The report, covering data quality and EDA (Q1), model summary (Q2), production architecture (Q3), client communication (Q4) |
-| [`code/notebooks/01_eda.ipynb`](code/notebooks/01_eda.ipynb) | Exploratory analysis and data-quality checks |
-| [`code/notebooks/02_modelling.ipynb`](code/notebooks/02_modelling.ipynb) | Modelling, validation, error analysis, experiments |
+| [`code/notebooks/ahu_fault_detection.ipynb`](code/notebooks/ahu_fault_detection.ipynb) | The whole analysis in one notebook, from problem and data quality to model, validation, error analysis, monitoring and conclusions |
 | [`code/`](code) | Source package, `run.py`, reproduction steps in [`code/README.md`](code/README.md) |
 | `predictions.csv` | Predictions for the held-out period (July and August) |
 

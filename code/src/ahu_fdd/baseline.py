@@ -1,5 +1,6 @@
 """Two baselines without machine learning, scored with the same alarm logic and event scorer as the
-model, so the comparison in notebook 02 is like for like.
+model, so the comparison in the notebook is like for like. `fit_logistic` adds the simplest ML
+baseline, a multinomial logistic regression on the same features, rows and weights as the model.
 
 - bms_alarm: what most buildings run today. A supply-air temperature alarm when SAT is more than
   `sat_band` away from setpoint (3-hour median). It says "something is wrong", never which fault.
@@ -13,7 +14,14 @@ from __future__ import annotations
 
 import pandas as pd
 
+from sklearn.compose import make_column_transformer
+from sklearn.impute import SimpleImputer
+from sklearn.linear_model import LogisticRegression
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import OneHotEncoder, StandardScaler
+
 from .config import CLASSES
+from .pipeline import training_sample
 
 
 def _as_prob(label: pd.Series) -> pd.DataFrame:
@@ -41,3 +49,18 @@ def expert_rules(w: pd.DataFrame, sat_hi: float = 1.5, sat_warm: float = 1.0, co
     # SAT off setpoint and the coil temperature drop no longer follows the valve command
     label[(sat_err.abs() > sat_hi) & (corr < corr_lo)] = "chw_valve_stuck"
     return _as_prob(label)
+
+
+def fit_logistic(X: pd.DataFrame, y: pd.Series, seed: int = 0):
+    """Multinomial logistic regression. Imputer, scaler and encoder sit inside the pipeline, so they
+    learn from the training fold only. Missing values get an indicator column, because a missing
+    sensor is information, not a zero."""
+    X, codes, w = training_sample(X, y)
+    num = [c for c in X.columns if c != "building_code"]
+    prep = make_column_transformer(
+        (OneHotEncoder(handle_unknown="ignore"), ["building_code"]),
+        (make_pipeline(SimpleImputer(strategy="median", add_indicator=True, keep_empty_features=True),
+                       StandardScaler()), num))
+    clf = make_pipeline(prep, LogisticRegression(max_iter=500, random_state=seed))
+    clf.fit(X, codes, logisticregression__sample_weight=w)
+    return clf

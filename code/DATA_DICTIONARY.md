@@ -65,7 +65,7 @@ The code keeps these apart, because each one means something different to the mo
 
 `ahu_id`, `fault_type` (four types, see the brief), `start`, `end`. There are 28 events in January to June. Start is the
 engineer's estimate and end is the repair time, so rows within 1 day of an event are treated as uncertain and
-not used as "normal" training rows. Labels are known to be incomplete (notebook 02 finds one unlabelled stuck damper).
+not used as "normal" training rows. Labels are known to be incomplete (the notebook finds one unlabelled stuck damper in section 13).
 
 ## Derived columns (`features.add_physics`, `clean.add_running_flags`)
 

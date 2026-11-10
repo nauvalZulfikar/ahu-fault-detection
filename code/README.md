@@ -20,7 +20,7 @@ python starter/validate_submission.py ../predictions.csv
 ## Tests
 
 ```bash
-python -m pytest tests          # 22 tests, about 2 seconds, no data files needed
+python -m pytest tests          # 23 tests, about 2 seconds, no data files needed
 ```
 
 The tests cover every cleaning step (duplicates, units, out-of-range, frozen sensors, clock shift, running flags),

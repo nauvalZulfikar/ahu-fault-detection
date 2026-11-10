@@ -33,7 +33,7 @@ Why this design? Residuals absorb the unit differences that would force per-unit
 **Value in money.** Priced with Yuill and Braun's (2017) figure of merit at Indonesian rates (PLN Rp1,115/kWh, technician Rp34,458/h, kW per fault measured), the nested model is worth Rp16,700 per AHU-month against −Rp2,100 for the BMS alarm, the only method above zero in all three scenarios (notebook §18).
 
 **Errors.**
-- **Half of the 6 misses and wrong types are on the three chronically saturated units** (B1-AHU-05, B3-AHU-02, B3-AHU-09), where valve at 100% makes three faults look alike (SAT just rises). Fix: a saturated-unit mode and a site check.
+- **In the in-sample run, half of the 6 misses and wrong types are on the three chronically saturated units** (B1-AHU-05, B3-AHU-02, B3-AHU-09), where valve at 100% makes three faults look alike (SAT just rises). Fix: a saturated-unit mode and a site check.
 - **The other confusions** (B1-AHU-02, B3-AHU-06) need an independent discharge or zone temperature.
 - **The missed damper fault** (B3-AHU-05) is in the mall, which has no CO2 sensor. **One of the two false alarms is a real but unlabelled stuck damper** (B1-AHU-11, Q1 §1.5).
 

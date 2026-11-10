@@ -89,14 +89,17 @@ def test_intervals_and_mcnemar_match_reported_numbers():
 
 def test_value_counts_earlier_repair_and_wasted_visits():
     t0 = pd.Timestamp("2025-01-06")
-    ev = pd.DataFrame(dict(fault_type=["chw_valve_stuck", "sat_sensor_bias", "low_coil_capacity"],
+    ev = pd.DataFrame(dict(ahu_id=["A", "B", "C"], fault_type=["chw_valve_stuck", "sat_sensor_bias", "low_coil_capacity"],
                            start=[t0] * 3, end=[t0 + pd.Timedelta("100h")] * 3, running_rows=[1200] * 3,
                            detected=[True, True, False], delay_h=[6.0, 6.0, np.nan],
                            pred_type=["chw_valve_stuck", "low_coil_capacity", None], type_ok=[True, False, False]))
     al = pd.DataFrame(dict(true_alarm=[True, True, False]))
-    v = E.value(ev, al, 10, kw=2.0, tariff=0.1, labour=20.0)
-    assert v["energy_usd"] == pytest.approx(2 * 0.1 * 70)  # 100 h - 6 h delay - 24 h response, fan always on
-    assert v["visit_usd"] == pytest.approx(4 * 20 + 2.375 * 20)  # wrong coil check plus one false alarm
-    assert v["usd_per_ahu_month"] == pytest.approx((14 - 127.5) / 10)
-    bms = E.value(ev, al, 10, kw=2.0, tariff=0.1, labour=20.0, typed=False)
-    assert bms["visit_usd"] == pytest.approx(2 * (10 + 20) + 50)
+    # A wastes 3.517 kW of cooling at 1 kW/TR plus 1 kW of fan, B saves energy (floored at 0)
+    kw = pd.DataFrame(dict(ahu_id=["A", "B"], start=[t0] * 2, coil_kw=[3.517, -20.0], fan_kw=[1.0, 0.5]))
+    v = E.value(ev, al, 10, kw=kw, kw_tr=1.0, tariff=1000.0, labour=20.0)
+    assert v["energy_rp"] == pytest.approx(2 * 1000 * 70)  # 100 h - 6 h delay - 24 h response, fan always on
+    assert v["visit_rp"] == pytest.approx(4 * 20 + 2.625 * 20)  # wrong coil check plus one false alarm
+    assert v["rp_per_ahu_month"] == pytest.approx((140000 - 132.5) / 10)
+    bms = E.value(ev, al, 10, kw=kw, kw_tr=1.0, tariff=1000.0, labour=20.0, typed=False)
+    assert bms["visit_rp"] == pytest.approx(2 * (10 + 20) + 50)
+    assert bms["energy_rp"] == pytest.approx(0.5 * 140000)  # B is found but wastes nothing

@@ -101,20 +101,63 @@ def objective(s: dict, fa_weight: float = 4.0) -> float:
 
 
 # ------------------------------------------------------------------ value in money
-# Service hours per fault type and the three price scenarios are assumptions, not client data.
-SERVICE_H = dict(chw_valve_stuck=2.0, oa_damper_stuck=2.0, sat_sensor_bias=1.5, low_coil_capacity=4.0)
-SCENARIOS = {"pessimistic": dict(kw=1.0, tariff=0.10, labour=40.0),
-             "central": dict(kw=3.0, tariff=0.13, labour=20.0),
-             "optimistic": dict(kw=6.0, tariff=0.18, labour=10.0)}
+# Indonesian prices, Q4 2026. Every number has a source in the notebook (section 18).
+# - tariff, Rp/kWh. PLN B-3 (business, medium voltage, above 200 kVA) Rp1.114,74 and B-2
+#   (6.600 VA to 200 kVA) Rp1.444,70, unchanged for Oct-Dec 2026 (ESDM).
+# - labour, Rp/hour, loaded. Monthly wage / 173 h x (1 + employer BPJS + THR). Employer BPJS is
+#   JHT 3.7% + JP 2% + JKK 0.24-1.74% + JKM 0.3% + Kesehatan 4% (10.2-11.7%), THR is one month a
+#   year (8.3%). Wages are UMK Denpasar 2026 Rp3.499.878, a typical building technician posting
+#   Rp5 jt, and a manufacturer service technician Rp9 jt.
+# - kw_tr, chiller plant kW per ton of cooling. 0.56 design, 0.62 measured in a West Java mall,
+#   1.61 an old air-cooled plant (Indonesian audits).
+# - response_h. 4 h is the critical tier of HVAC service contracts, 24 h the routine next-day
+#   tier, 48 h the "2x24 jam" repair promise of a manufacturer's service in Indonesia.
+# SERVICE_H stays an engineering estimate: contractor guides give 1-2 h for an actuator swap and
+#   2-4 h for a motorised damper; no AHU-specific labour standard was found for Indonesia.
+SERVICE_H = dict(chw_valve_stuck=2.0, oa_damper_stuck=3.0, sat_sensor_bias=1.5, low_coil_capacity=4.0)
 
 
-def value(ev: pd.DataFrame, al: pd.DataFrame, ahu_months: float, kw: float, tariff: float, labour: float,
-          response_h: float = 24.0, typed: bool = True, p_tech: float = 0.5) -> dict:
-    """Net value in USD per AHU-month, adapted from Yuill's figure of merit (Yuill 2014, ch. 7;
+def _loaded(wage: float, jkk: float) -> float:
+    return round(wage / 173 * (1 + 0.037 + 0.02 + jkk + 0.003 + 0.04 + 1 / 12))
+
+
+SCENARIOS = {"pessimistic": dict(kw_tr=0.56, tariff=1114.74, labour=_loaded(9_000_000, 0.0174), response_h=48.0),
+             "central": dict(kw_tr=0.62, tariff=1114.74, labour=_loaded(5_000_000, 0.0089), response_h=24.0),
+             "optimistic": dict(kw_tr=1.61, tariff=1444.70, labour=_loaded(3_499_878, 0.0024), response_h=4.0)}
+
+
+def excess_kw(w: pd.DataFrame, labels: pd.DataFrame, pad: str = "1D", window: str = "28D") -> pd.DataFrame:
+    """Extra coil cooling (kW thermal, sensible only) and extra fan power (kW electric) during each
+    labelled event, against the same AHU's own healthy rows in the 28 days around it, matched on
+    hour of day and weekday/weekend. Latent load is ignored, so the cooling side is conservative.
+    w: steady rows with cool_kw and fan_power_kw."""
+    w = w.assign(hour=w.timestamp.dt.hour, wkend=w.timestamp.dt.day_of_week >= 5)
+    out = []
+    for e in labels.itertuples(index=False):
+        a = w[w.ahu_id == e.ahu_id]
+        bad = pd.Series(False, index=a.index)
+        for o in labels[labels.ahu_id == e.ahu_id].itertuples(index=False):
+            bad |= (a.timestamp >= o.start - pd.Timedelta(pad)) & (a.timestamp < o.end + pd.Timedelta(pad))
+        near = (a.timestamp >= e.start - pd.Timedelta(window)) & (a.timestamp < e.end + pd.Timedelta(window))
+        base = a[~bad & near].groupby(["hour", "wkend"])[["cool_kw", "fan_power_kw"]].mean()
+        base.columns = ["cool_b", "fan_b"]
+        m = a[(a.timestamp >= e.start) & (a.timestamp < e.end)].join(base, on=["hour", "wkend"])
+        m = m.dropna(subset=["cool_b"])
+        out.append(dict(ahu_id=e.ahu_id, start=e.start, coil_kw=(m.cool_kw - m.cool_b).mean(),
+                        fan_kw=(m.fan_power_kw - m.fan_b).mean()))
+    return pd.DataFrame(out)
+
+
+def value(ev: pd.DataFrame, al: pd.DataFrame, ahu_months: float, kw: pd.DataFrame, kw_tr: float,
+          tariff: float, labour: float, response_h: float = 24.0, typed: bool = True,
+          p_tech: float = 0.5) -> dict:
+    """Net value in Rp per AHU-month, adapted from Yuill's figure of merit (Yuill 2014, ch. 7;
     Yuill & Braun 2017, eq. 7.1-7.21). The baseline is what the labels record: every fault is
     repaired at its labelled end anyway, so the repair itself is not counted, only what changes.
 
-    - right type: energy saved by repairing earlier, kw * tariff * running hours between
+    - electric kW wasted per event = coil_kw * kw_tr / 3.517 + fan_kw from `excess_kw`, floored
+      at 0 (a fault that cools less saves energy; its cost is comfort, which is not priced here)
+    - right type: energy saved by repairing earlier, kW * tariff * running hours between
       (first alarm + response_h) and the labelled repair
     - wrong type: one wasted check of the predicted fault, SERVICE_H[pred] * labour, no benefit
     - missed: 0
@@ -122,9 +165,11 @@ def value(ev: pd.DataFrame, al: pd.DataFrame, ahu_months: float, kw: float, tari
     - typed=False (BMS alarm, no diagnosis, Yuill eq. 7.21): the technician finds the fault with
       probability p_tech after 0.5 h, otherwise spends 2 h more for nothing
     """
+    k = ev[["ahu_id", "start"]].merge(kw, on=["ahu_id", "start"], how="left")
+    elec = (k.coil_kw * kw_tr / 3.517 + k.fan_kw).clip(lower=0).fillna(0).to_numpy()
     dur = (ev.end - ev.start).dt.total_seconds() / 3600
     saved_h = ((dur - ev.delay_h - response_h).clip(lower=0) * ev.running_rows / 12 / dur).fillna(0)
-    energy = kw * tariff * saved_h
+    energy = elec * tariff * saved_h.to_numpy()
     if typed:
         gain = np.where(ev.type_ok, energy, 0.0)
         visits = np.where(ev.detected & ~ev.type_ok, ev.pred_type.map(SERVICE_H).fillna(2.0) * labour, 0.0)
@@ -135,8 +180,8 @@ def value(ev: pd.DataFrame, al: pd.DataFrame, ahu_months: float, kw: float, tari
         fa_cost = 2.5 * labour
     n_fa = int((~al.true_alarm).sum()) if len(al) else 0
     cost = visits.sum() + n_fa * fa_cost
-    return dict(energy_usd=float(gain.sum()), visit_usd=float(cost),
-                usd_per_ahu_month=float((gain.sum() - cost) / ahu_months))
+    return dict(energy_rp=float(gain.sum()), visit_rp=float(cost),
+                rp_per_ahu_month=float((gain.sum() - cost) / ahu_months))
 
 
 # ------------------------------------------------------------------ uncertainty

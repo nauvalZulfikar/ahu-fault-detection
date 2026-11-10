@@ -2,8 +2,12 @@
 
 Validation is leave-one-month-out on Jan-Jun with a purge: when month k is scored, nothing from
 month k, nothing within 2 days of it, and no row of any fault event that touches it is used to
-fit either the normal-behaviour models or the classifier. That mimics production, where both
-models only ever see history.
+fit the classifier or the normal-behaviour model whose residuals score month k.
+
+One indirect path remains. The classifier's training features for another month j are residuals
+from a normal model fit without month j, and that model did see month k's healthy rows. So normal
+behaviour from month k (never its labels) can reach the classifier. Production has no such path,
+because the normal models there only ever see history.
 """
 
 from __future__ import annotations

@@ -11,7 +11,7 @@ pip install -r requirements.txt
 # next to code/ (no export needed), or point to them with
 # export AHU_DATA_DIR=/abs/path/to/data
 
-python run.py                          # overwrites ../predictions.csv, about 8 minutes and 4 GB RAM (8 threads)
+python run.py                          # overwrites ../predictions.csv, about 2 to 4 minutes on a 10-core machine and 4 GB RAM (8 threads)
 python starter/validate_submission.py ../predictions.csv
 ```
 

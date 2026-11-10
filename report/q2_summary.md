@@ -30,7 +30,7 @@ Why this design? Residuals absorb the unit differences that would force per-unit
 
 **Against the rules**, the model finds 8 faults they miss and they find none it misses (McNemar p = 0.008; right type 12 to 0, p = 0.0005), with equal delay on the 19 both find (2.5 h vs 2.6 h). These gaps and the one against the BMS alarm survive a Holm correction. **Against a logistic regression** on the same features the model cuts false alarms from 27 to 2; its typing edge (6 to 1) is not significant (p = 0.125). **Across five seeds** every run finds 27/28, types 21 or 22 and raises 2 or 3 false alarms.
 
-**Value in money.** Priced with Yuill and Braun's (2017) figure of merit at assumed rates (3 kW per fault, 0.13 USD/kWh, 20 USD/h), the nested model is worth 0.61 USD per AHU-month against −2.78 for the BMS alarm, and it picks the same thresholds as `J` (notebook §18).
+**Value in money.** Priced with Yuill and Braun's (2017) figure of merit at Indonesian rates (PLN Rp1,115/kWh, technician Rp34,458/h, kW per fault measured), the nested model is worth Rp16,700 per AHU-month against −Rp2,100 for the BMS alarm, the only method above zero in all three scenarios (notebook §18).
 
 **Errors.**
 - **Half of the 6 misses and wrong types are on the three chronically saturated units** (B1-AHU-05, B3-AHU-02, B3-AHU-09), where valve at 100% makes three faults look alike (SAT just rises). Fix: a saturated-unit mode and a site check.

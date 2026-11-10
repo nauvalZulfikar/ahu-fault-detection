@@ -7,17 +7,17 @@
 Dear [Name],
 
 
-Thank you for telling us straight. You are right to be frustrated. Four call-outs that found nothing is four wasted trips, and if your team stops trusting the alerts, the system is not doing its job. That is our problem to fix, not your technicians'.
+Thank you for telling me straight. You are right to be frustrated. Four call-outs that found nothing is four wasted trips, and if your team stops trusting the alerts, the system is not doing its job. That is my problem to fix, not your technicians'.
 
-Here is what we will do, starting this week:
+Here is what I will do, starting this week:
 
-1. **We go through all 9 alerts with you.** For each one we will show what the system saw and tell you plainly whether it was our mistake. Some faults, like a temperature sensor that reads 2 °C high, cannot be seen by walking up to the unit. For those we will give your technicians a 10-minute check to confirm or rule it out. The rest we will treat as false alarms and fix.
-2. **For the next two weeks, our engineers check every alert before it reaches your team.** Your technicians will only get alerts we are confident about, each with a short note saying what to check and where. We expect that to be one or two a week for this building, not nine.
-3. **You get a one-page summary every Friday:** alerts sent, what your team found, and what we changed.
+1. **I go through all 9 alerts with you.** For each one I will show what the system saw and tell you plainly whether it was my mistake. Some faults, like a temperature sensor that reads 2 °C high, cannot be seen by walking up to the unit. For those I will give your technicians a 10-minute check to confirm or rule it out. The rest I will treat as false alarms and fix.
+2. **For the next two weeks, I check every alert before it reaches your team.** Your technicians will only get alerts I am confident about, each with a short note saying what to check and where. I expect that to be one or two a week for this building, not nine.
+3. **You get a one-page summary every Friday:** alerts sent, what your team found, and what I changed.
 
-For the building owner, I suggest this message: *the pilot is working but still being tuned; the two new buildings will start next month in "listening mode", where we collect their data and check it ourselves, with no alerts to technicians; alerts go live there once this building has had two clean weeks.* The owner keeps the timeline, and your team gets no extra load until the system has earned it.
+For the building owner, I suggest this message: *the pilot is working but still being tuned; the two new buildings will start next month in "listening mode", where I collect their data and check it myself, with no alerts to technicians; alerts go live there once this building has had two clean weeks.* The owner keeps the timeline, and your team gets no extra load until the system has earned it.
 
-Could we have 45 minutes with you and one of the technicians who did the checks, on Tuesday or Wednesday? Their notes on what they found will help us more than anything else.
+Could I have 45 minutes with you and one of the technicians who did the checks, on Tuesday or Wednesday? Their notes on what they found will help me more than anything else.
 
 Kind regards,\
 Nauval Zulfikar\
@@ -25,11 +25,11 @@ Data Scientist, VentureSEA
 
 ## 4.2 Internal note to the project lead
 
-**What I think is happening.** In validation the model raised about one alarm per AHU every seven months, almost all of them real faults. For a building of 12-16 AHUs that is roughly one alert every two weeks, so 9 in one week is about 20 times what we expected. Something is different in this building, not just unlucky. The likely causes, from most to least likely:
+**What I think is happening.** In validation the model raised about one alarm per AHU every seven months, almost all of them real faults. For a building of 12-16 AHUs that is roughly one alert every two weeks, so 9 in one week is about 20 times what I expected. Something is different in this building, not just unlucky. The likely causes, from most to least likely:
 - **The building's baseline is probably too short.** If the normal-behaviour models only know this building from its first two weeks, that is too little; in validation every unit had six months, and Q2 shows a unit with no history raises about 90 times more false alarms than a known unit. A short baseline sees normal swings (a rainy week, a schedule change) as faults.
 - **One root cause raised several alerts.** If the central plant's chilled water ran warm, every AHU looks like it has a weak coil. That is one plant ticket, not five AHU tickets.
-- **Data problems were read as faults.** In the training data alone we found a logger on the wrong clock, a frozen sensor and a power meter in the wrong units. Any of these in the pilot building would trigger alerts.
-- **Some "nothing found" may be real faults** that a visual check cannot see (sensor bias, a valve stuck at 30%). We should not assume all 4 were false.
+- **Data problems were read as faults.** In the training data alone I found a logger on the wrong clock, a frozen sensor and a power meter in the wrong units. Any of these in the pilot building would trigger alerts.
+- **Some "nothing found" may be real faults** that a visual check cannot see (sensor bias, a valve stuck at 30%). I would not assume all 4 were false.
 
 **Next two weeks.**
 - Days 1-3: triage all 9 alerts against the raw trends; label each one *real fault / data issue / plant-level / false alarm*. Check the four "no fault found" units with a reference thermometer and a valve stroke test.

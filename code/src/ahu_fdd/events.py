@@ -94,7 +94,7 @@ def score_events(keys: pd.DataFrame, pred: pd.Series, labels: pd.DataFrame, ahu_
 
 
 def objective(s: dict, fa_weight: float = 4.0) -> float:
-    """What we tune post-processing on: share of faults found with the right type, minus a
+    """What I tune post-processing on: share of faults found with the right type, minus a
     penalty for false alarms per AHU-month (weight 4: 0.05 FA/AHU-month, i.e. about 2 wasted
     visits a month across 40 AHUs, costs as much as missing one fault in five)."""
     return s["typed_recall"] - fa_weight * s["fa_per_ahu_month"]

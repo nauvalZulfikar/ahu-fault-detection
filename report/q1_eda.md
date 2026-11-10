@@ -16,7 +16,7 @@ I worked in five steps. Every check became a function in `code/src/ahu_fdd/clean
 |---|---|---|---|
 | Logger clock 8 h off for a week | B1, 1 Jun 16:00 to 8 Jun 16:00 (32,153 rows) | Two different readings per timestamp on 1 Jun, then an 8-hour hole on 8 Jun. B1's OAT was out of step with B2/B3: mean gap 3.6 °C as logged, 0.3 °C after shifting by +8 h. The logger was writing UTC. | Shift those rows +8 h |
 | Duplicate export | B3, 14 Feb (3,439 rows) | Identical rows twice | Drop one copy |
-| Fan power in W, not kW | B3-AHU-04, 1 to 21 Apr (6,023 rows) | Power up to 1,000× rated motor power, including 40 "kW" standby readings with the fan off | Divide whole days by 1,000 |
+| Fan power in W, not kW | B3-AHU-04, 1 to 21 Apr (6,023 rows) | Power up to 471× rated motor power, including 40 "kW" standby readings with the fan off | Divide whole days by 1,000 |
 | CO2 stuck at 0 or 5,000 ppm | B2-AHU-03, 20 Jan to 27 Feb (781 rows) | Values at the sensor's range limits | Set to missing |
 | Frozen supply-air sensor (SAT) at 13.1 °C | B2-AHU-08, 21 to 29 Jul, test period (2,587 rows) | Unchanged reading for days while the valve moves | Set to missing and flag. The model gives no alert while a key sensor is flagged. |
 | Frozen return-air sensor (RAT) at 23.4 °C | B1-AHU-07, 5 to 26 May (2,239 rows) | Same check | Same fix |

@@ -100,6 +100,45 @@ def objective(s: dict, fa_weight: float = 4.0) -> float:
     return s["typed_recall"] - fa_weight * s["fa_per_ahu_month"]
 
 
+# ------------------------------------------------------------------ value in money
+# Service hours per fault type and the three price scenarios are assumptions, not client data.
+SERVICE_H = dict(chw_valve_stuck=2.0, oa_damper_stuck=2.0, sat_sensor_bias=1.5, low_coil_capacity=4.0)
+SCENARIOS = {"pessimistic": dict(kw=1.0, tariff=0.10, labour=40.0),
+             "central": dict(kw=3.0, tariff=0.13, labour=20.0),
+             "optimistic": dict(kw=6.0, tariff=0.18, labour=10.0)}
+
+
+def value(ev: pd.DataFrame, al: pd.DataFrame, ahu_months: float, kw: float, tariff: float, labour: float,
+          response_h: float = 24.0, typed: bool = True, p_tech: float = 0.5) -> dict:
+    """Net value in USD per AHU-month, adapted from Yuill's figure of merit (Yuill 2014, ch. 7;
+    Yuill & Braun 2017, eq. 7.1-7.21). The baseline is what the labels record: every fault is
+    repaired at its labelled end anyway, so the repair itself is not counted, only what changes.
+
+    - right type: energy saved by repairing earlier, kw * tariff * running hours between
+      (first alarm + response_h) and the labelled repair
+    - wrong type: one wasted check of the predicted fault, SERVICE_H[pred] * labour, no benefit
+    - missed: 0
+    - false alarm: one wasted check at the mean service time
+    - typed=False (BMS alarm, no diagnosis, Yuill eq. 7.21): the technician finds the fault with
+      probability p_tech after 0.5 h, otherwise spends 2 h more for nothing
+    """
+    dur = (ev.end - ev.start).dt.total_seconds() / 3600
+    saved_h = ((dur - ev.delay_h - response_h).clip(lower=0) * ev.running_rows / 12 / dur).fillna(0)
+    energy = kw * tariff * saved_h
+    if typed:
+        gain = np.where(ev.type_ok, energy, 0.0)
+        visits = np.where(ev.detected & ~ev.type_ok, ev.pred_type.map(SERVICE_H).fillna(2.0) * labour, 0.0)
+        fa_cost = np.mean(list(SERVICE_H.values())) * labour
+    else:
+        gain = np.where(ev.detected, p_tech * energy, 0.0)
+        visits = np.where(ev.detected, 0.5 * labour + (1 - p_tech) * 2 * labour, 0.0)
+        fa_cost = 2.5 * labour
+    n_fa = int((~al.true_alarm).sum()) if len(al) else 0
+    cost = visits.sum() + n_fa * fa_cost
+    return dict(energy_usd=float(gain.sum()), visit_usd=float(cost),
+                usd_per_ahu_month=float((gain.sum() - cost) / ahu_months))
+
+
 # ------------------------------------------------------------------ uncertainty
 def proportion_ci(k: int, n: int, level: float = 0.95) -> tuple[float, float]:
     """Exact (Clopper-Pearson) interval for k successes out of n."""

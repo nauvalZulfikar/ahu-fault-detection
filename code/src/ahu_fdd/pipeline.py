@@ -102,13 +102,13 @@ def predict_proba(clf, X) -> pd.DataFrame:
 
 
 def oof_probabilities(w: pd.DataFrame, df: pd.DataFrame, labels: pd.DataFrame, cols: list[str],
-                      months=range(1, 7)) -> pd.DataFrame:
+                      months=range(1, 7), seed: int = 0) -> pd.DataFrame:
     tr = w[w["split"] == "train"]
     train_rows = tr[~tr["near_event"] | (tr["label"] != "normal")]  # drop fuzzy edges of events
     out = []
     for k in months:
         ok = fold_mask(df, labels, k).reindex(train_rows.index).fillna(False)
-        clf = fit_classifier(train_rows.loc[ok, cols], train_rows.loc[ok, "label"])
+        clf = fit_classifier(train_rows.loc[ok, cols], train_rows.loc[ok, "label"], seed)
         hold = tr[tr["month"] == k]
         out.append(predict_proba(clf, hold[cols]))
     return pd.concat(out).reindex(tr.index)

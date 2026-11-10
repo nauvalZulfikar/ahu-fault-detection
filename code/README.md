@@ -1,4 +1,4 @@
-# AHU fault detection and diagnosis: code
+# AHU fault detection and diagnosis (code)
 
 ## Reproduce `predictions.csv`
 
@@ -14,9 +14,9 @@ python run.py                          # writes ../predictions.csv (about 2 minu
 python starter/validate_submission.py ../predictions.csv
 ```
 
-`run.py` is deterministic: fixed seeds, and LightGBM runs on CPU.
+`run.py` is deterministic, with fixed seeds and LightGBM on CPU.
 
-`starter/validate_submission.py` is the starter validator with one change: it reads the test file from
+`starter/validate_submission.py` is the starter validator with one change, it reads the test file from
 the same `AHU_DATA_DIR` as the rest of the code.
 
 The report is built from `../report/*.md` with `sh ../report/build_report.sh` (pandoc and Chrome).
@@ -26,10 +26,10 @@ The notebooks write their figures into `../report/figures/`.
 
 | Notebook | What it shows |
 |---|---|
-| `notebooks/01_eda.ipynb` | Q1: coverage, every data-quality check and its fix, patterns across buildings, fault signatures vs physics, unlabelled anomalies |
-| `notebooks/02_modelling.ipynb` | Q2: framing, residual models, leave-one-month-out validation, threshold tuning, results, error analysis, new-AHU and fewer-sensor experiments, final predictions |
+| `notebooks/01_eda.ipynb` | Q1. Coverage, every data-quality check and its fix, patterns across buildings, fault signatures vs physics, unlabelled anomalies |
+| `notebooks/02_modelling.ipynb` | Q2. Framing, residual models, leave-one-month-out validation, threshold tuning, results, comparison with two non-ML baselines, uncertainty and seed spread, error analysis, new-AHU and fewer-sensor experiments, final predictions |
 
-Run them from `notebooks/`: `jupyter nbconvert --to notebook --execute --inplace 01_eda.ipynb` (02 takes about 10 minutes).
+Run them from `notebooks/` with `jupyter nbconvert --to notebook --execute --inplace 01_eda.ipynb` (02 takes about 30 minutes, most of it the five-seed check).
 
 ## Layout
 
@@ -43,6 +43,7 @@ src/ahu_fdd/
   pipeline.py              leave-one-month-out folds, classifier, end-to-end run()
   events.py                causal alarm state machine and event-level scoring (detection, delay, type, false alarms)
   experiments.py           new-AHU and fewer-sensor experiments
+  baseline.py              two non-ML baselines (BMS supply-air alarm, expert rules) for comparison
 starter/validate_submission.py
 ```
 
@@ -52,5 +53,5 @@ Clean the raw log (`clean.py`) → add physics features per row → fit one Ligh
 behaviour per signal (valve, fan, mixed air, damper, CO2, return air) on rows with no work order, AHU
 as a categorical input, and take residuals → 3 h and 12 h trailing medians of residuals and physics
 features → LightGBM multiclass (normal + 4 faults) → per-AHU alarm state machine (open at smoothed
-P(fault) > 0.8, close after 12 h below 0.3, type = highest mean class probability since the alarm opened).
+P(fault) > 0.8, close after 12 h below 0.3, type is the class with the highest mean probability since the alarm opened).
 Only steady running rows (fan on for at least 30 min) are scored. Other rows carry the AHU's last state.

@@ -1,0 +1,74 @@
+{
+ "baselines": {
+  "BMS SAT alarm (today)": {
+   "events": 28.0,
+   "detected": 14.0,
+   "type_ok": 8.0,
+   "recall": 0.5,
+   "typed_recall": 0.2857142857142857,
+   "median_delay_h": 2.875,
+   "alarms": 25.0,
+   "false_alarms": 8.0,
+   "fa_per_ahu_month": 0.03333333333333333
+  },
+  "Expert rules": {
+   "events": 28.0,
+   "detected": 19.0,
+   "type_ok": 10.0,
+   "recall": 0.6785714285714286,
+   "typed_recall": 0.35714285714285715,
+   "median_delay_h": 2.5833333333333335,
+   "alarms": 35.0,
+   "false_alarms": 9.0,
+   "fa_per_ahu_month": 0.0375
+  },
+  "Model": {
+   "events": 28.0,
+   "detected": 27.0,
+   "type_ok": 22.0,
+   "recall": 0.9642857142857143,
+   "typed_recall": 0.7857142857142857,
+   "median_delay_h": 9.333333333333334,
+   "alarms": 33.0,
+   "false_alarms": 2.0,
+   "fa_per_ahu_month": 0.008333333333333333
+  }
+ },
+ "seeds": [
+  {
+   "seed": 0,
+   "detected": 27,
+   "type_ok": 22,
+   "median_delay_h": 9.333333333333334,
+   "false_alarms": 2
+  },
+  {
+   "seed": 1,
+   "detected": 27,
+   "type_ok": 21,
+   "median_delay_h": 10.666666666666666,
+   "false_alarms": 3
+  },
+  {
+   "seed": 2,
+   "detected": 27,
+   "type_ok": 21,
+   "median_delay_h": 11.0,
+   "false_alarms": 3
+  },
+  {
+   "seed": 3,
+   "detected": 27,
+   "type_ok": 21,
+   "median_delay_h": 8.833333333333334,
+   "false_alarms": 3
+  },
+  {
+   "seed": 4,
+   "detected": 27,
+   "type_ok": 21,
+   "median_delay_h": 10.916666666666666,
+   "false_alarms": 3
+  }
+ ]
+}

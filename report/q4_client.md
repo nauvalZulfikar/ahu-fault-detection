@@ -26,7 +26,7 @@ Data Scientist, VentureSEA
 ## 4.2 Internal note to the project lead
 
 **What I think is happening.** In validation the model raised about one alarm per AHU every seven months, almost all of them real faults. For a building of 12-16 AHUs that is roughly one alert every two weeks, so 9 in one week is about 20 times what we expected. Something is different in this building, not just unlucky. The likely causes, from most to least likely:
-- **The building's baseline is probably too short.** If the normal-behaviour models only know this building from its first two weeks, that is too little; in validation every unit had six months, and Q2 shows a unit with no history raises about 20 times more false alarms. A short baseline sees normal swings (a rainy week, a schedule change) as faults.
+- **The building's baseline is probably too short.** If the normal-behaviour models only know this building from its first two weeks, that is too little; in validation every unit had six months, and Q2 shows a unit with no history raises about 90 times more false alarms than a known unit. A short baseline sees normal swings (a rainy week, a schedule change) as faults.
 - **One root cause raised several alerts.** If the central plant's chilled water ran warm, every AHU looks like it has a weak coil. That is one plant ticket, not five AHU tickets.
 - **Data problems were read as faults.** In the training data alone we found a logger on the wrong clock, a frozen sensor and a power meter in the wrong units. Any of these in the pilot building would trigger alerts.
 - **Some "nothing found" may be real faults** that a visual check cannot see (sensor bias, a valve stuck at 30%). We should not assume all 4 were false.

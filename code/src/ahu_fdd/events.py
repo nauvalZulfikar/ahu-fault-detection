@@ -98,3 +98,39 @@ def objective(s: dict, fa_weight: float = 4.0) -> float:
     penalty for false alarms per AHU-month (weight 4: 0.05 FA/AHU-month, i.e. about 2 wasted
     visits a month across 40 AHUs, costs as much as missing one fault in five)."""
     return s["typed_recall"] - fa_weight * s["fa_per_ahu_month"]
+
+
+# ------------------------------------------------------------------ uncertainty
+def proportion_ci(k: int, n: int, level: float = 0.95) -> tuple[float, float]:
+    """Exact (Clopper-Pearson) interval for k successes out of n."""
+    from scipy.stats import beta
+    a = (1 - level) / 2
+    lo = beta.ppf(a, k, n - k + 1) if k > 0 else 0.0
+    hi = beta.ppf(1 - a, k + 1, n - k) if k < n else 1.0
+    return float(lo), float(hi)
+
+
+def rate_ci(k: int, exposure: float, level: float = 0.95) -> tuple[float, float]:
+    """Exact Poisson interval for k counts over `exposure` (e.g. false alarms per AHU-month)."""
+    from scipy.stats import chi2
+    a = (1 - level) / 2
+    lo = chi2.ppf(a, 2 * k) / 2 if k > 0 else 0.0
+    return float(lo / exposure), float(chi2.ppf(1 - a, 2 * k + 2) / 2 / exposure)
+
+
+def median_ci(x, n_boot: int = 5000, level: float = 0.95, seed: int = 0) -> tuple[float, float]:
+    """Bootstrap interval for the median, resampling events."""
+    x = np.asarray(pd.Series(x).dropna())
+    rng = np.random.default_rng(seed)
+    m = np.median(rng.choice(x, (n_boot, len(x))), axis=1)
+    a = (1 - level) / 2
+    return float(np.quantile(m, a)), float(np.quantile(m, 1 - a))
+
+
+def mcnemar_exact(a_ok: pd.Series, b_ok: pd.Series) -> dict:
+    """Paired comparison of two methods on the same events. Only events where they disagree count."""
+    from scipy.stats import binomtest
+    b = int((a_ok & ~b_ok).sum())
+    c = int((~a_ok & b_ok).sum())
+    p = binomtest(b, b + c, 0.5).pvalue if b + c else 1.0
+    return dict(only_first=b, only_second=c, p_value=float(p))

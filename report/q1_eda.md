@@ -78,7 +78,7 @@ For each labelled event, the figure shows the median of each signal during the e
 - **B1-AHU-11, 22 April to 5 May: an unlabelled stuck damper.**
   - The outdoor-air fraction falls from 0.08 to 0.02 and CO2 climbs by about 650 ppm.
   - The damper command rises from 15% to 70% with no effect: the stuck-damper signature exactly, with no work order.
-  - The model flags it (Q2), and it is one of only two "false alarms" out of fold. Labels come from work orders, so they are incomplete. A false-alarm count against them overstates the true false alarms.
+  - The model flags it (Q2), and it is one of the two "false alarms" in the in-sample scoring of Q2 section 13. Labels come from work orders, so they are incomplete. A false-alarm count against them overstates the true false alarms.
 - **The three saturated units look like permanent low coil capacity.** They are not labelled, and probably should be checked as one maintenance item each.
 - **Labelled but hard to see:**
   - Sensor-bias events change almost nothing in the raw signals. The model still finds all 6, because the controller opens the valve and shifts the fan to chase a SAT reading that is off, and those residuals leave the normal band on 77% and 69% of fault rows. They are the slowest fault to detect (median 31 hours in sample).

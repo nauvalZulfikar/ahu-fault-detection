@@ -15,12 +15,12 @@ Why this design? Rules need per-unit thresholds and a raw-signal classifier lear
 - **Scored by event, as the maintenance team sees it:** found or not, right type or not, delay to the first alarm, and false alarms per AHU-month.
 - **Thresholds** were tuned on the out-of-fold probabilities with `J = typed recall − 4 × FA/AHU-month`.
 
-**Results (out of fold, 28 labelled events, 240 AHU-months, 95% intervals in brackets)**
+**Results** (out of fold, 28 events, 240 AHU-months, 95% intervals). The bold row picks alarm thresholds inside each fold; every other row picks them on the scored months.
 
 | | Found | Right type | Median delay | False alarms (per AHU-month) |
 |---|---|---|---|---|
-| **Model** | 27/28 (82-100%) | 22/28 (59-92%) | 9.3 h | 2 (0.001-0.030) |
-| Model, nested tuning | 27/28 | 20/28 (51-87%) | 11.3 h | 2 (0.008) |
+| **Model (nested, honest)** | 27/28 (82-100%) | 20/28 (51-87%) | 11.3 h | 2 (0.001-0.030) |
+| Model (in-sample) | 27/28 | 22/28 (59-92%) | 9.3 h | 2 (0.008) |
 | Logistic regression | 25/28 (72-98%) | 17/28 (41-78%) | 6.8 h | 27 (0.074-0.164) |
 | Expert rules (in-sample) | 19/28 (48-84%) | 10/28 (19-56%) | 2.6 h | 9 (0.017-0.071) |
 | BMS alarm (today) | 14/28 | none | 2.9 h | 8 (0.033) |
@@ -31,10 +31,10 @@ Why this design? Rules need per-unit thresholds and a raw-signal classifier lear
 **Against the rules**, the model finds 8 faults they miss and they find none it misses (McNemar p = 0.008; right type 12 to 0, p = 0.0005), with equal delay on the 19 both find (2.5 h vs 2.6 h). These gaps and the one against the BMS alarm survive a Holm correction. **Against a logistic regression** on the same features the model cuts false alarms from 27 to 2; its typing edge (6 to 1) is not significant (p = 0.125). **Across five seeds** every run finds 27/28, types 21 or 22 and raises 2 or 3 false alarms.
 
 **Errors.**
-- **Half of the 6 misses and wrong types are on the three chronically saturated units** (B1-AHU-05, B3-AHU-02, B3-AHU-09). Their valve is already at 100%, so low coil capacity, a stuck-closed valve and sensor bias all show up the same way: SAT rises. Fix: a separate mode for saturated units (SAT against CHW supply temperature and load) and a site check.
+- **Half of the 6 misses and wrong types are on the three chronically saturated units** (B1-AHU-05, B3-AHU-02, B3-AHU-09). With the valve already at 100%, low coil capacity, a stuck valve and sensor bias all just raise SAT. Fix: a separate mode for saturated units (SAT against CHW supply temperature and load) and a site check.
 - **The other confusions** (sensor bias vs low coil capacity on B1-AHU-02, stuck valve vs sensor bias on B3-AHU-06) need an independent discharge or zone temperature.
 - **The missed damper fault** (B3-AHU-05) is in the mall, which has no CO2 sensor. **One of the two false alarms is a real but unlabelled stuck damper** (B1-AHU-11, Q1 §1.5).
 
 **New AHU and fewer sensors.** Missing CO2 or airflow costs almost nothing, because the outdoor-air fraction from the temperature balance carries the damper evidence. **A brand-new AHU is the real risk** (179 false alarms on day one). **Fourteen days of listening** (no alerts, normal models refit on the unit's healthy weeks) fixes most of it, which drives onboarding in Q3 and Q4.
 
-**Test period.** `predictions.csv` (711,994 rows) passes the starter validator. It holds 12 sustained alarms (over 6 h), e.g. a stuck valve on B1-AHU-01 from 7 to 15 July.
+**Test period.** `predictions.csv` (711,994 rows) passes the validator and holds 12 sustained alarms (over 6 h).

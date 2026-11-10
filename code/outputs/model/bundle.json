@@ -1,0 +1,122 @@
+{
+ "created_utc": "2026-11-10T09:28:26+00:00",
+ "code_commit": "ffea4b8",
+ "data_sha256_16": {
+  "ahu_train.parquet": "58daad558b7b2ceb",
+  "ahu_test.parquet": "ceb2d9c0080cd974",
+  "fault_labels_train.csv": "09d0de7e1a6fcd5c",
+  "ahu_metadata.csv": "8a86fceed3259a27"
+ },
+ "libraries": {
+  "pandas": "3.1.1",
+  "numpy": "2.5.4",
+  "pyarrow": "26.0.1",
+  "scikit-learn": "1.9.1",
+  "lightgbm": "4.7.0",
+  "scipy": "1.18.1"
+ },
+ "seed": 0,
+ "post_processing": {
+  "t_on": 0.8,
+  "t_off": 0.3,
+  "smooth": 12,
+  "hold": 144
+ },
+ "classifier_params": {
+  "objective": "multiclass",
+  "num_class": 5,
+  "n_estimators": 300,
+  "learning_rate": 0.05,
+  "num_leaves": 15,
+  "min_child_samples": 200,
+  "subsample": 0.5,
+  "subsample_freq": 1,
+  "colsample_bytree": 0.7,
+  "reg_lambda": 5.0,
+  "verbose": -1,
+  "n_jobs": 8
+ },
+ "normal_model_params": {
+  "objective": "l1",
+  "n_estimators": 150,
+  "learning_rate": 0.1,
+  "num_leaves": 31,
+  "min_child_samples": 50,
+  "subsample": 0.5,
+  "subsample_freq": 1,
+  "verbose": -1,
+  "n_jobs": 8
+ },
+ "features": [
+  "building_code",
+  "has_co2",
+  "has_flow",
+  "sa_flow_m3h",
+  "sat_err_med3h",
+  "r_valve_med3h",
+  "r_fan_med3h",
+  "r_mat_med3h",
+  "r_damper_med3h",
+  "r_co2_med3h",
+  "r_rat_med3h",
+  "oaf_med3h",
+  "mix_dt_med3h",
+  "static_err_med3h",
+  "power_ratio_med3h",
+  "coil_dt_med3h",
+  "valve_hi_3h",
+  "valve_lo_3h",
+  "sat_off_3h",
+  "sat_err_med12h",
+  "r_valve_med12h",
+  "r_fan_med12h",
+  "r_mat_med12h",
+  "r_damper_med12h",
+  "r_co2_med12h",
+  "r_rat_med12h",
+  "oaf_med12h",
+  "mix_dt_med12h",
+  "static_err_med12h",
+  "power_ratio_med12h",
+  "coil_dt_med12h",
+  "valve_hi_12h",
+  "valve_lo_12h",
+  "sat_off_12h",
+  "valve_coil_corr_12h",
+  "sat_err_std_3h",
+  "r_valve_trend",
+  "r_fan_trend"
+ ],
+ "classes": [
+  "normal",
+  "chw_valve_stuck",
+  "oa_damper_stuck",
+  "sat_sensor_bias",
+  "low_coil_capacity"
+ ],
+ "evaluation_oof_jan_jun": {
+  "tuned_in_sample": {
+   "events": 28.0,
+   "detected": 27.0,
+   "type_ok": 22.0,
+   "recall": 0.9642857142857143,
+   "typed_recall": 0.7857142857142857,
+   "median_delay_h": 9.333333333333334,
+   "alarms": 33.0,
+   "false_alarms": 2.0,
+   "fa_per_ahu_month": 0.008333333333333333
+  },
+  "nested": {
+   "events": 28.0,
+   "detected": 27.0,
+   "type_ok": 20.0,
+   "recall": 0.9642857142857143,
+   "typed_recall": 0.7142857142857143,
+   "median_delay_h": 11.25,
+   "alarms": 36.0,
+   "false_alarms": 2.0,
+   "fa_per_ahu_month": 0.008333333333333333
+  }
+ },
+ "predictions_sha256_16": "f19ade444892bc66"
+}

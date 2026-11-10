@@ -6,3 +6,4 @@ __pycache__/
 .DS_Store
 code/outputs/*.parquet
 report/report.html
+code/outputs/model/*.joblib

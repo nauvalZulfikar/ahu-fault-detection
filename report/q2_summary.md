@@ -20,13 +20,14 @@ Why this design? Pure rules need thresholds per unit, and a classifier on raw si
 | | Found | Right type | Median delay | False alarms (per AHU-mo.) |
 |---|---|---|---|---|
 | **Model** | 27/28 (82-100%) | 22/28 (59-92%) | 9.3 h | 2 (0.001-0.030) |
+| Model, thresholds tuned inside folds | 27/28 | 20/28 (51-87%) | 11.3 h | 2 (0.008) |
 | Expert rules (tuned in-sample) | 19/28 (48-84%) | 10/28 (19-56%) | 2.6 h | 9 (0.017-0.071) |
 | BMS supply-air alarm (today) | 14/28 | none | 2.9 h | 8 (0.033) |
 | No CO2 (or airflow) | 28/28 (27) | 22/28 (21) | 10.6 h | 1 (2) |
 | New AHU, day 1 | 28/28 | 12/28 | 0.6 h | 179 (0.75) |
 | New AHU, +14 days | 28/28 | 20/28 | 13.0 h | 8 (0.036) |
 
-**Against the rules**, the model finds 8 faults they miss and they find none it misses (McNemar p = 0.008; right type 12 to 0, p = 0.0005). On the 19 faults both find, delay is equal (2.5 h vs 2.6 h). **Across five seeds** every run finds 27/28, types 21 or 22 and raises 2 or 3 false alarms.
+**Against the rules**, the model finds 8 faults they miss and they find none it misses (McNemar p = 0.008; right type 12 to 0, p = 0.0005). On the 19 faults both find, delay is equal (2.5 h vs 2.6 h). All three gaps (with the BMS alarm too) survive a Holm correction. **Across five seeds** every run finds 27/28, types 21 or 22 and raises 2 or 3 false alarms.
 
 **Errors.**
 - **Half of the 6 misses and wrong types are on the three chronically saturated units** (B1-AHU-05, B3-AHU-02, B3-AHU-09). Their valve is already at 100%, so low coil capacity, a stuck-closed valve and sensor bias all show up the same way: SAT rises. Fix: a separate mode for saturated units, using SAT against CHW supply temperature and load, plus a site check of these units.
@@ -35,7 +36,6 @@ Why this design? Pure rules need thresholds per unit, and a classifier on raw si
 
 **New AHU and fewer sensors.**
 - **Missing CO2 or airflow costs almost nothing.** The outdoor-air fraction from the temperature balance carries the damper evidence, so fewer sensors means the same model with those inputs missing.
-- **A brand-new AHU is the real risk.** On day one the fleet models do not know the unit's operating point, which gives about 90 times the false-alarm rate of known units (179 false alarms instead of 2).
-- **Fourteen days of listening fixes most of this** (data collected, no alerts sent, normal models refit with the new unit's healthy weeks). That rule drives onboarding in Q3 and the advice in Q4.
+- **A brand-new AHU is the real risk.** On day one the fleet models do not know the unit's operating point (179 false alarms instead of 2). **Fourteen days of listening fixes most of this** (no alerts sent, normal models refit with the unit's healthy weeks), which drives onboarding in Q3 and Q4.
 
-**Test period.** `predictions.csv` (711,994 rows) passes the starter validator. It holds 12 sustained alarms (longer than 6 h), for example a stuck valve on B1-AHU-01 from 7 to 15 July. B2-AHU-08's frozen SAT sensor is masked, not alarmed.
+**Test period.** `predictions.csv` (711,994 rows) passes the starter validator. It holds 12 sustained alarms (longer than 6 h), for example a stuck valve on B1-AHU-01 from 7 to 15 July.

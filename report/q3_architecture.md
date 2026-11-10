@@ -16,7 +16,7 @@
 
 **Training (weekly, or on demand).** The job retrains the fleet normal-behaviour models and the fault classifier on all curated history, with no-fault rows defined as rows without an open work order. It runs the same leave-one-month-out evaluation as the notebook. The output is one versioned bundle: model files, alarm thresholds, feature list, code commit and evaluation report, stored in a model registry (MLflow or a versioned bucket).
 
-**Promotion.** A new bundle runs in *shadow mode* for at least a week. It scores live data and logs alerts, but sends nothing. It replaces the live bundle only if, on the same week, its confirmed alerts are no fewer and its false-alarm rate is no higher. Rollback means pointing back to the previous bundle ID.
+**Promotion.** False alarms are rare (0.008 per AHU-month in Q2), so a one-week shadow run on 40 AHUs covers about 9 AHU-months and expects fewer than one false alarm from either bundle. A week cannot tell two bundles apart, so promotion has two gates. First, a *labelled replay*: the new bundle (challenger) and the live one (champion) score all labelled history with the same out-of-fold procedure, and the challenger must find and type at least as many events, compared event by event with McNemar's test, with no more false alarms. Second, a fleet-wide *shadow run* long enough to bound the false-alarm rate. With no unconfirmed alarm in 30 AHU-months, the 95% upper bound on the rate is 0.1 per AHU-month, which takes a little over three weeks on 40 AHUs and under two days on 600. Rollback means pointing back to the previous bundle ID, which takes minutes because bundles are never edited. The Q2 notebook writes such a bundle (`outputs/model/bundle.json` holds data hashes, library versions, seed, thresholds and code commit).
 
 **Inference (hourly).** For each AHU the job takes the last 24 h of curated data, computes features, scores, and runs the alarm state machine. Its state (open alarms, cumulative type probabilities) persists between runs, so the logic is exactly the causal code validated offline. Hourly is enough because these faults develop over hours and cost money over days: the validated median delay is about 10 hours, set by the 3-12 h evidence windows, not by how often we score. Scoring every 5 minutes would add cost and alert churn and find nothing sooner. Safety-critical conditions (a fan trip, a fire damper) stay with the BMS's own alarms.
 
@@ -36,9 +36,11 @@ Raw alarms do not go straight to the CMMS. They pass through a small rules layer
 |---|---|---|
 | Data freshness | heartbeat and last row per building | no data for 30 min |
 | Data quality | DQ flags per AHU per day | new flag type, or > 5% of rows flagged |
-| Input drift | residual distributions per AHU vs the training window | median residual shifts beyond its normal band for a week |
+| Input drift | PSI of the 10 most important features and of weather and chilled-water temperature, live month vs training window | PSI above 0.2 (watch) or 0.3 (act), read against the largest month-to-month PSI seen in training |
 | Alert volume | alerts per AHU per month, per building | 2x the validation rate |
 | Outcome | precision from CMMS outcomes, time to close | precision below 60% over 4 weeks |
+
+**Retraining triggers.** Besides the weekly job, a retrain starts early when a key feature crosses PSI 0.3 in more than one building, when precision from CMMS outcomes falls more than 5 points below its level over the previous quarter for 4 weeks, when 10 or more new confirmed labels have arrived, or when a building changes its schedules or setpoints. A retrained bundle still has to pass both promotion gates.
 
 **First month after go-live:** every alert is reviewed by an engineer before it reaches the CMMS, every no-fault-found outcome is reviewed with the technician within 48 h, and these numbers go to the client weekly. A rising alert rate with no change in confirmed faults usually means a building has changed (new schedule, setpoints, BMS update), not that the units broke. The response is to re-baseline that building, not to retune the model for everyone.
 
@@ -47,6 +49,6 @@ Raw alarms do not go straight to the CMMS. They pass through a small rules layer
 1. **Day 1:** install the agent and fill the point-mapping template. The agent validates the mapping against the BMS point list and reports any missing points.
 2. **Days 1-2:** backfill as much history as the BMS keeps (usually 3 to 12 months). Run the DQ checks on the backfill and review them with the site's engineer. This is where wrong clocks and wrong units turn up.
 3. **Days 2-5:** score the building with the fleet models in shadow mode. A new AHU starts from the fleet models, which already know buildings of the same type. Without its own history, though, it raises about 0.75 false alarms per AHU-month in Q2's test, roughly 90× the rate on known units (0.008). So the normal models are refit once the unit has 14 healthy days. In Q2 that brings the rate down to 0.036 per AHU-month.
-4. **Go-live** only after the building has had two weeks in shadow mode with an acceptable alert rate (below 0.1 false alarms per AHU-month). Until then, an engineer reviews every alert before it reaches the CMMS.
+4. **Go-live** after two weeks in shadow mode with at most one unconfirmed alert per building. On 12 to 16 units, two weeks is only 6 to 8 AHU-months, so this check catches a badly mapped building but cannot prove a rate of 0.1 false alarms per AHU-month. The rate is then tracked monthly on the whole fleet. Until go-live, an engineer reviews every alert before it reaches the CMMS.
 
 Missing sensors are handled by design. The feature set already distinguishes buildings with and without CO2 and airflow, and Q2 shows how much detection drops without them. A building with fewer points simply gets the reduced model and a lower confidence label on its tickets.

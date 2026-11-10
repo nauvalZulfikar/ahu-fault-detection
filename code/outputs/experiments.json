@@ -27,10 +27,21 @@
   "type_ok": 21.0,
   "recall": 0.9642857142857143,
   "typed_recall": 0.75,
-  "median_delay_h": 10.083333333333334,
+  "median_delay_h": 11.166666666666666,
   "alarms": 33.0,
-  "false_alarms": 2.0,
-  "fa_per_ahu_month": 0.008333333333333333
+  "false_alarms": 3.0,
+  "fa_per_ahu_month": 0.0125
+ },
+ "no mixed-air sensor": {
+  "events": 28.0,
+  "detected": 27.0,
+  "type_ok": 20.0,
+  "recall": 0.9642857142857143,
+  "typed_recall": 0.7142857142857143,
+  "median_delay_h": 12.333333333333334,
+  "alarms": 36.0,
+  "false_alarms": 8.0,
+  "fa_per_ahu_month": 0.03333333333333333
  },
  "new AHU, day one": {
   "events": 28.0,

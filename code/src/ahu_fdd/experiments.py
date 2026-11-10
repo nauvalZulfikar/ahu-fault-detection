@@ -2,7 +2,7 @@
 
 - new AHU: the AHU has no history. Its normal-behaviour models come from the rest of the fleet
   only, and the classifier never saw it.
-- fewer sensors: the building has no CO2 sensor or airflow station.
+- fewer sensors: the building has no CO2 sensor or airflow station, or loses its mixed-air sensor.
 """
 
 from __future__ import annotations
@@ -78,7 +78,10 @@ def fewer_sensors(w, labels, drop=("co2", "flow")):
         w[[c for c in w.columns if c.startswith("r_co2")]] = np.nan
         w["has_co2"] = 0
     if "flow" in drop:
-        w["has_flow"] = 0  # flow only enters through flow_est, which falls back to fan speed
+        w["has_flow"] = 0
+        w["sa_flow_m3h"] = np.nan  # the raw airflow column is a classifier input too (see feature_columns)
+    if "mat" in drop:  # mixed-air sensor lost, so every window feature built from mat_c goes
+        w[[c for c in w.columns if c.startswith(("r_mat_", "oaf_", "mix_dt_", "coil_dt_", "valve_coil"))]] = np.nan
     cols = F.feature_columns(w)
     tr = w[w["split"] == "train"]
     return PL.oof_probabilities(w, w, labels, cols).loc[tr.index], tr[["ahu_id", "timestamp"]]

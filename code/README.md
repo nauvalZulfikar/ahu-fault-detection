@@ -3,14 +3,15 @@
 ## Reproduce `predictions.csv`
 
 ```bash
-# Python 3.12
-python -m venv .venv && source .venv/bin/activate
+cd code                                # every command below runs from code/
+python3.12 -m venv .venv && source .venv/bin/activate   # or uv venv --python 3.12 --seed .venv
 pip install -r requirements.txt
 
-# the four data files from the assignment package
-export AHU_DATA_DIR=/path/to/data      # default: ../data, i.e. a data/ folder next to code/
+# put ahu_train.parquet, ahu_test.parquet, ahu_metadata.csv and fault_labels_train.csv in a data/ folder
+# next to code/ (no export needed), or point to them with
+# export AHU_DATA_DIR=/abs/path/to/data
 
-python run.py                          # writes ../predictions.csv (2 to 5 minutes on 8 cores)
+python run.py                          # overwrites ../predictions.csv, about 8 minutes and 4 GB RAM (8 threads)
 python starter/validate_submission.py ../predictions.csv
 ```
 
@@ -20,7 +21,7 @@ python starter/validate_submission.py ../predictions.csv
 ## Tests
 
 ```bash
-python -m pytest tests          # 23 tests, about 2 seconds, no data files needed
+python -m pytest tests          # 23 tests, 2 to 30 seconds, no data files needed
 ```
 
 The tests cover every cleaning step (duplicates, units, out-of-range, frozen sensors, clock shift, running flags),
@@ -52,7 +53,7 @@ The notebooks write their figures into `../report/figures/`.
 | 7 to 15 (Q2) | Framing, residual models, leave-one-month-out validation, threshold tuning, results, comparison with three simpler methods (BMS alarm, expert rules, logistic regression), uncertainty, seeds, nested tuning, Holm correction, calibration and recalibration, error analysis, new-AHU and fewer-sensor experiments, final predictions |
 | 16 to 21 | Unlabelled leads in the test period, behaviour tests, the maintenance team's view, model bundle and experiment log, monitoring plan, conclusions |
 
-Run it from `notebooks/` with `jupyter nbconvert --to notebook --execute --inplace ahu_fault_detection.ipynb` (about 45 minutes, most of it the five-seed check and the nested tuning).
+Run it from `notebooks/` with `jupyter nbconvert --to notebook --execute --inplace ahu_fault_detection.ipynb` (about 30 minutes on 8 cores, most of it the five-seed check and the nested tuning).
 
 ## Layout
 

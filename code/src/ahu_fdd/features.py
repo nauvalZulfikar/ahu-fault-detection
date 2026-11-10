@@ -111,5 +111,7 @@ def add_windows(df: pd.DataFrame) -> pd.DataFrame:
 
 def feature_columns(df: pd.DataFrame) -> list[str]:
     base = ["building_code", "has_co2", "has_flow"]
+    # sa_flow_m3h also matches "3h", so the raw airflow reading is an input. It is a measured signal, NaN where
+    # a building has no airflow sensor, and the shipped model was trained with it, so it stays.
     win = [c for c in df.columns if any(c.endswith(s) for s in ("3h", "12h", "_trend"))]
     return base + win

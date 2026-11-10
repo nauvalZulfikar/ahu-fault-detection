@@ -27,7 +27,7 @@ Other checks came back clean:
 - No other sensor sits at its range limits.
 - Setpoints are constant per AHU.
 - Fan status agrees with fan speed and power.
-- The test period has no missing values. About 0.3% of its expected rows (2,245) are absent: short logging gaps, left as gaps.
+- In the test period the only missing values are CO2 and supply airflow where no sensor exists (30% and 70% of rows), and the DQ mask removes B2-AHU-08's frozen SAT from 21 to 29 July. About 0.3% of its expected rows (2,245) are absent: short logging gaps, left as gaps.
 
 **What I would ask the client to check:**
 1. The B1 logger's time zone and NTP setting. If it can drift once, it can drift again.
@@ -47,16 +47,16 @@ Other checks came back clean:
 **Schedules.**
 - B2 (hospital) runs non-stop.
 - B3 (mall) runs 09:00 to 23:00 every day.
-- B1 (office) runs on weekdays only (the curve averages in weekends, hence 72%). Two of its 16 units run 24/7, which gives the 12% floor at night.
+- B1 (office) runs on weekdays only (the curve averages in weekends, hence 71.5%). Two of its 16 units run 24/7, which gives the 12% floor at night.
 
 Start-up and shut-down rows are transient, so the model scores only steady running rows (fan on for at least 30 minutes).
 
-**Valve and setpoint.** Most of the time the chilled-water (CHW) valve sits between 25% and 70% and SAT holds setpoint within ±0.3 °C. Two exceptions:
+**Valve and setpoint.** For the middle half of running time the chilled-water (CHW) valve sits between about 32% and 60% (25th to 75th percentile across the three buildings) and SAT holds setpoint within ±0.3 °C. Two exceptions:
 - B3 and B1 show a spike at 100% valve together with a second hump at SAT +2 °C.
 - This comes almost entirely from three units: **B1-AHU-05, B3-AHU-02 and B3-AHU-09**. Their valve is above 95% for 73 to 84% of running time and the fan is near 100%, yet SAT still sits 1.5 to 1.9 °C above setpoint, outside any labelled event.
-- These units are undersized or chronically degraded (fouled coil, low CHW flow, high filter loss). On them, "low coil capacity" cannot show up as more valve opening. That is why they cause half of the model's errors (Q2).
+- These units are undersized or chronically degraded (fouled coil or low CHW flow; the filter changes rule out filter loss). On them, "low coil capacity" cannot show up as more valve opening. That is why they cause half of the model's errors (Q2).
 
-**Filters.** Filter pressure drop follows a sawtooth: a slow rise, then a step down at each filter change (B3-AHU-07 from about 135 to 40 Pa in late April, B2-AHU-06 from about 65 to 25 Pa in early April). B1-AHU-05 climbs from about 90 to 245 Pa over the six months with no change at all, which helps explain its saturation. Filter loading is normal ageing, not a labelled fault, so the normal-behaviour models take filter pressure drop as an input instead of flagging it.
+**Filters.** Filter pressure drop follows a sawtooth: a slow rise, then a step down at each filter change (B3-AHU-07 from about 135 to 40 Pa in late April, B2-AHU-06 from about 65 to 25 Pa in early April). B1-AHU-05 climbs from about 90 to 245 Pa from January to June and is changed only on 30 June. All three saturated units get a filter change, and none of them stops saturating (valve above 95% for 84%, 72% and 77% of running time before, 85%, 75% and 80% after), so the filter is not the cause. Filter loading is normal ageing, not a labelled fault, so the normal-behaviour models take filter pressure drop as an input instead of flagging it.
 
 ![Filter pressure drop](figures/filter_dp.png)
 
@@ -81,7 +81,7 @@ For each labelled event, the figure shows the median of each signal during the e
   - The model flags it (Q2), and it is one of only two "false alarms" out of fold. Labels come from work orders, so they are incomplete. A false-alarm count against them overstates the true false alarms.
 - **The three saturated units look like permanent low coil capacity.** They are not labelled, and probably should be checked as one maintenance item each.
 - **Labelled but hard to see:**
-  - Sensor-bias events change almost nothing measurable.
+  - Sensor-bias events change almost nothing in the raw signals. The model still finds all 6, because the controller opens the valve and shifts the fan to chase a SAT reading that is off, and those residuals leave the normal band on 77% and 69% of fault rows. They are the slowest fault to detect (median 31 hours in sample).
   - Damper faults in B3 have no CO2 to confirm them.
   - Short events (under a day) leave little evidence once the analysis is restricted to steady running rows.
 - **Labels have fuzzy edges.** Start and end come from work orders, so signals often begin to move before the labelled start. The model therefore does not train on rows within a day of an event as "normal" (Q2).

@@ -18,9 +18,9 @@ I worked in five steps. Every check became a function in `code/src/ahu_fdd/clean
 | Duplicate export | B3, 14 Feb (3,439 rows) | Identical rows twice | Drop one copy |
 | Fan power in W, not kW | B3-AHU-04, 1 to 21 Apr (6,023 rows) | Power up to 471× rated motor power, including 40 "kW" standby readings with the fan off | Divide whole days by 1,000 |
 | CO2 stuck at 0 or 5,000 ppm | B2-AHU-03, 20 Jan to 27 Feb (781 rows) | Values at the sensor's range limits | Set to missing |
-| Frozen supply-air sensor (SAT) at 13.1 °C | B2-AHU-08, 21 to 29 Jul, test period (2,587 rows) | Unchanged reading for days while the valve moves | Set to missing and flag. The model gives no alert while a key sensor is flagged. |
+| Frozen supply-air sensor (SAT) at 13.1 °C | B2-AHU-08, 21 to 29 Jul, test period (2,587 rows) | Unchanged reading for days while the valve moves | Set to missing and flag. The model reads these rows as missing values. No rule holds back its alerts on flagged rows yet (Q3 adds one). |
 | Frozen return-air sensor (RAT) at 23.4 °C | B1-AHU-07, 5 to 26 May (2,239 rows) | Same check | Same fix |
-| 8-day outage | B2, 10 Mar 05:55 to 18 Mar 14:00 | Missing rows | Left as a gap. Rolling windows do not reach across it. |
+| 8-day outage | B2, 10 Mar 05:55 to 18 Mar 14:00 | Missing rows | Left as a gap. The 3 h and 12 h windows count running rows, not hours, so the first windows after it also hold rows from before it (as over nights and weekends). |
 | Missing by design | CO2 is missing in B3; airflow exists only in B2 | Missing values per building | Kept missing. The model treats a missing sensor as missing, not as zero. |
 
 Other checks came back clean:
@@ -86,5 +86,5 @@ For each labelled event, the figure shows the median of each signal during the e
   - Short events (under a day) leave little evidence once the analysis is restricted to steady running rows.
 - **Labels have fuzzy edges.** Start and end come from work orders, so signals often begin to move before the labelled start. The model therefore does not train on rows within a day of an event as "normal" (Q2).
 - **Test period (July to August):**
-  - B2-AHU-08's frozen SAT is a data fault, not a coil fault. The DQ mask keeps it from raising an alarm.
+  - B2-AHU-08's frozen SAT is a data fault, not a coil fault. With the reading set to missing the model raised no alarm on it, though no rule enforces that yet.
   - Against their April to June baseline, a few units drift. B1-AHU-12 and B3-AHU-06 run fans about 6% slower, and B2-AHU-12 takes less outdoor air. The model raises sustained alarms on all three in the test predictions (sensor bias, sensor bias and damper respectively). They are worth a site check.

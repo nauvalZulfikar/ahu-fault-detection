@@ -8,7 +8,7 @@
 
 **Cloud storage.** Files land in object storage in two zones:
 - *raw*: append-only and never edited, so any result can be replayed.
-- *curated*: the output of the same `clean.py` used in this take-home, run as data-quality (DQ) checks. These cover clock shifts, duplicate exports, unit errors, out-of-range values, frozen sensors and gaps. Each check writes a DQ flag per AHU per hour instead of silently fixing data. Flags feed both the model, which gives no fault alert while a key sensor is flagged, and a DQ ticket queue, because a frozen sensor is itself worth a work order.
+- *curated*: the output of the same `clean.py` used in this take-home, run as data-quality (DQ) checks. These cover clock shifts, duplicate exports, unit errors, out-of-range values, frozen sensors and gaps. Each check writes a DQ flag per AHU per hour instead of silently fixing data. Flags feed both the model, which should give no fault alert while a key sensor is flagged (a rule the take-home code does not have yet), and a DQ ticket queue, because a frozen sensor is itself worth a work order.
 
 **Scale.** 600 AHUs at 12 rows an hour is about 173k rows a day, or about 2,000 AHUs and 576k rows a day at the stated target. That is a few hundred MB a day in Parquet. It fits comfortably in one Postgres/TimescaleDB instance or DuckDB over Parquet. I do not need Spark or streaming: an hourly batch job on one machine handles the whole fleet in minutes.
 

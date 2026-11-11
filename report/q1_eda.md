@@ -27,7 +27,7 @@ Other checks came back clean:
 - No other sensor sits at its range limits.
 - Setpoints are constant per AHU.
 - Fan status agrees with fan speed and power.
-- In the test period the only missing values are CO2 and supply airflow where no sensor exists (30% and 70% of rows), and the DQ mask removes B2-AHU-08's frozen SAT from 21 to 29 July. About 0.3% of its expected rows (2,245) are absent: short logging gaps, left as gaps.
+- In the test period the only missing values are CO2 and supply airflow where no sensor exists (30% and 70% of rows), and the DQ mask removes B2-AHU-08's frozen SAT from 21 to 29 July. About 0.3% of its expected rows (2,246) are absent, all short logging gaps that I left as gaps.
 
 **What I would ask the client to check:**
 1. The B1 logger's time zone and NTP setting. If it can drift once, it can drift again.
@@ -78,7 +78,7 @@ For each labelled event, the figure shows the median of each signal during the e
 - **B1-AHU-11, 22 April to 5 May: an unlabelled stuck damper.**
   - The outdoor-air fraction falls from 0.08 to 0.02 and CO2 climbs by about 650 ppm.
   - The damper command rises from 15% to 70% with no effect: the stuck-damper signature exactly, with no work order.
-  - The model flags it (Q2), and it is one of the two "false alarms" in the in-sample scoring of Q2 section 13. Labels come from work orders, so they are incomplete. A false-alarm count against them overstates the true false alarms.
+  - The model flags it (Q2), and it is one of the 2 "false alarms" of the run with thresholds tuned on the scored months (Q2 section 13, against 3 for the shipped nested run). Labels come from work orders, so they are incomplete. A false-alarm count against them overstates the true false alarms.
 - **The three saturated units look like permanent low coil capacity.** They are not labelled, and probably should be checked as one maintenance item each.
 - **Labelled but hard to see:**
   - Sensor-bias events change almost nothing in the raw signals. The model still finds all 6, because the controller opens the valve and shifts the fan to chase a SAT reading that is off, and those residuals leave the normal band on 77% and 69% of fault rows. They are the slowest fault to detect (median 31 hours in sample).

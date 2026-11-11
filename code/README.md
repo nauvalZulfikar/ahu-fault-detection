@@ -53,7 +53,7 @@ The notebooks write their figures into `../report/figures/`.
 | 7 to 15 (Q2) | Framing, residual models, leave-one-month-out validation, threshold tuning, results, comparison with three simpler methods (BMS alarm, expert rules, logistic regression), uncertainty, seeds, nested tuning, Holm correction, calibration and recalibration, error analysis, new-AHU and fewer-sensor experiments, final predictions |
 | 16 to 21 | Unlabelled leads in the test period, behaviour tests, the maintenance team's view, model bundle and experiment log, monitoring plan, conclusions |
 
-Run it from `notebooks/` with `jupyter nbconvert --to notebook --execute --inplace ahu_fault_detection.ipynb` (about 20 minutes on a 10-core machine, most of it the new-AHU and missing-sensor runs and the five-seed check).
+Run it from `notebooks/` with `jupyter nbconvert --to notebook --execute --inplace ahu_fault_detection.ipynb` (about 20 to 30 minutes on a 10-core machine, most of it the new-AHU and missing-sensor runs and the five-seed check).
 
 ## Layout
 
